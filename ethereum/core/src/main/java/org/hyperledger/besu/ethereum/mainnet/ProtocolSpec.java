@@ -77,8 +77,9 @@ public class ProtocolSpec {
   private final Optional<PoWHasher> powHasher;
 
   private final WithdrawalsValidator withdrawalsValidator;
-
   private final Optional<WithdrawalsProcessor> withdrawalsProcessor;
+  private final DepositsValidator depositsValidator;
+  private final Optional<DepositsProcessor> depositsProcessor;
 
   private final boolean isPoS;
   /**
@@ -109,6 +110,8 @@ public class ProtocolSpec {
    * @param powHasher the proof-of-work hasher
    * @param withdrawalsValidator the withdrawals validator to use
    * @param withdrawalsProcessor the Withdrawals processor to use
+   * @param depositsValidator the withdrawals validator to use
+   * @param depositsProcessor the Withdrawals processor to use
    * @param isPoS indicates whether the current spec is PoS
    */
   public ProtocolSpec(
@@ -137,6 +140,8 @@ public class ProtocolSpec {
       final Optional<PoWHasher> powHasher,
       final WithdrawalsValidator withdrawalsValidator,
       final Optional<WithdrawalsProcessor> withdrawalsProcessor,
+      final DepositsValidator depositsValidator,
+      final Optional<DepositsProcessor> depositsProcessor,
       final boolean isPoS) {
     this.name = name;
     this.evm = evm;
@@ -163,6 +168,8 @@ public class ProtocolSpec {
     this.powHasher = powHasher;
     this.withdrawalsValidator = withdrawalsValidator;
     this.withdrawalsProcessor = withdrawalsProcessor;
+    this.depositsValidator = depositsValidator;
+    this.depositsProcessor = depositsProcessor;
     this.isPoS = isPoS;
   }
 
@@ -370,6 +377,14 @@ public class ProtocolSpec {
 
   public Optional<WithdrawalsProcessor> getWithdrawalsProcessor() {
     return withdrawalsProcessor;
+  }
+
+  public DepositsValidator getDepositsValidator() {
+    return depositsValidator;
+  }
+
+  public Optional<DepositsProcessor> getDepositsProcessor() {
+    return depositsProcessor;
   }
 
   /**
