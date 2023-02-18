@@ -18,8 +18,8 @@ import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.GWei;
-import org.hyperledger.besu.ethereum.core.encoding.WithdrawalDecoder;
-import org.hyperledger.besu.ethereum.core.encoding.WithdrawalEncoder;
+import org.hyperledger.besu.ethereum.core.encoding.DepositDecoder;
+import org.hyperledger.besu.ethereum.core.encoding.DepositEncoder;
 import org.hyperledger.besu.ethereum.rlp.RLP;
 import org.hyperledger.besu.ethereum.rlp.RLPInput;
 import org.hyperledger.besu.ethereum.rlp.RLPOutput;
@@ -47,11 +47,11 @@ public class Deposit implements org.hyperledger.besu.plugin.data.Deposit {
   }
 
   public static Deposit readFrom(final RLPInput rlpInput) {
-    return WithdrawalDecoder.decode(rlpInput); //TODO
+    return DepositDecoder.decode(rlpInput); //TODO
   }
 
   public void writeTo(final RLPOutput out) {
-    WithdrawalEncoder.encode(this, out); //TODO
+    DepositEncoder.encode(this, out); //TODO
   }
 
   @Override
