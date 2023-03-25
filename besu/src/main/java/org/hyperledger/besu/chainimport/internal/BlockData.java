@@ -17,10 +17,13 @@ package org.hyperledger.besu.chainimport.internal;
 import org.hyperledger.besu.chainimport.internal.TransactionData.NonceProvider;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Transaction;
 import org.hyperledger.besu.evm.account.Account;
 import org.hyperledger.besu.evm.worldstate.WorldState;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +47,9 @@ public class BlockData {
   private final List<TransactionData> transactionData;
   private final Optional<Address> coinbase;
   private final Optional<Bytes> extraData;
+  private final Optional<Hash> depositsRoot;
+  private final List<DepositData> deposits;
+
 
   /**
    * Constructor for BlockData
@@ -60,12 +66,16 @@ public class BlockData {
       @JsonProperty("parentHash") final Optional<String> parentHash,
       @JsonProperty("coinbase") final Optional<String> coinbase,
       @JsonProperty("extraData") final Optional<String> extraData,
-      @JsonProperty("transactions") final List<TransactionData> transactions) {
+      @JsonProperty("transactions") final List<TransactionData> transactions,
+      @JsonProperty("depositsRoot") final Optional<String> depositsRoot,
+      @JsonProperty("deposits") final Optional<List<DepositData>> deposits) {
     this.number = number.map(UInt256::fromHexString).map(UInt256::toLong);
     this.parentHash = parentHash.map(Bytes32::fromHexString).map(Hash::wrap);
     this.coinbase = coinbase.map(Address::fromHexString);
     this.extraData = extraData.map(Bytes::fromHexStringLenient);
     this.transactionData = transactions;
+    this.depositsRoot = depositsRoot.map(Bytes32::fromHexString).map(Hash::wrap);
+    this.deposits = deposits.orElse(Collections.emptyList());
   }
 
   /**
@@ -102,6 +112,24 @@ public class BlockData {
    */
   public Optional<Bytes> getExtraData() {
     return extraData;
+  }
+
+  /**
+   * Gets deposits root.
+   *
+   * @return the extra data
+   */
+  public Optional<Hash> getDepositsRoot() {
+    return depositsRoot;
+  }
+
+  /**
+   * Gets deposits.
+   *
+   * @return the extra data
+   */
+  public List<DepositData> getDeposits() {
+    return deposits;
   }
 
   /**
