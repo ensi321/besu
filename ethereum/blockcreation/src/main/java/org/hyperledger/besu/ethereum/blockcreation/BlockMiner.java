@@ -20,6 +20,7 @@ import org.hyperledger.besu.ethereum.chain.MinedBlockObserver;
 import org.hyperledger.besu.ethereum.core.Block;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.core.BlockImporter;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Transaction;
 import org.hyperledger.besu.ethereum.mainnet.BlockImportResult;
 import org.hyperledger.besu.ethereum.mainnet.HeaderValidationMode;
@@ -108,10 +109,11 @@ public class BlockMiner<M extends AbstractBlockCreator> implements Runnable {
   public BlockCreationResult createBlock(
       final BlockHeader parentHeader,
       final List<Transaction> transactions,
+      final List<Deposit> deposits,
       final List<BlockHeader> ommers) {
     final BlockCreator blockCreator = this.blockCreatorFactory.apply(parentHeader);
     final long timestamp = scheduler.getNextTimestamp(parentHeader).getTimestampForHeader();
-    return blockCreator.createBlock(transactions, ommers, timestamp);
+    return blockCreator.createBlock(transactions, ommers, timestamp, deposits);
   }
 
   /**
@@ -123,7 +125,7 @@ public class BlockMiner<M extends AbstractBlockCreator> implements Runnable {
    */
   public BlockCreationResult createBlock(final BlockHeader parentHeader, final long timestamp) {
     final BlockCreator blockCreator = this.blockCreatorFactory.apply(parentHeader);
-    return blockCreator.createBlock(Optional.empty(), Optional.empty(), timestamp);
+    return blockCreator.createBlock(Optional.empty(), Optional.empty(), timestamp, Optional.empty());
   }
 
   protected boolean mineBlock() throws InterruptedException {

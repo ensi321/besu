@@ -19,6 +19,7 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.ethereum.core.Block;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.MiningParameters;
 import org.hyperledger.besu.ethereum.core.Transaction;
 
@@ -76,7 +77,7 @@ public class NoopMiningCoordinator implements MiningCoordinator {
   public Optional<Block> createBlock(
       final BlockHeader parentHeader,
       final List<Transaction> transactions,
-      final List<BlockHeader> ommers) {
+      final List<BlockHeader> ommers, List<Deposit> deposits) {
     return Optional.empty();
   }
 

@@ -173,12 +173,12 @@ public class MigratingMiningCoordinatorTest {
         MiningCoordinator::getCoinbase, MIGRATION_BLOCK_NUMBER, coordinator2, coordinator1);
 
     verifyDelegation(
-        c -> c.createBlock(blockHeader, emptyList(), emptyList()),
+        c -> c.createBlock(blockHeader, emptyList(), emptyList(), ),
         GENESIS_BLOCK_NUMBER,
         coordinator1,
         coordinator2);
     verifyDelegation(
-        c -> c.createBlock(blockHeader, emptyList(), emptyList()),
+        c -> c.createBlock(blockHeader, emptyList(), emptyList(), ),
         MIGRATION_BLOCK_NUMBER,
         coordinator2,
         coordinator1);

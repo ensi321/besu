@@ -38,7 +38,7 @@ public final class ValidationTestUtils {
             Bytes.wrap(
                 Resources.toByteArray(
                     EthHashTest.class.getResource(String.format("block_%d.blocks", num)))),
-            false);
+            true);
     input.enterList();
     return BlockHeader.readFrom(input, new MainnetBlockHeaderFunctions());
   }
@@ -49,7 +49,7 @@ public final class ValidationTestUtils {
             Bytes.wrap(
                 Resources.toByteArray(
                     EthHashTest.class.getResource(String.format("block_%d.blocks", num)))),
-            false);
+            true);
     input.enterList();
     input.skipNext();
     final List<Transaction> transactions = input.readList(Transaction::readFrom);

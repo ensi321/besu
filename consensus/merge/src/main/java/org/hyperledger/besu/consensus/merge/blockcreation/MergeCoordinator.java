@@ -30,6 +30,7 @@ import org.hyperledger.besu.ethereum.chain.MutableBlockchain;
 import org.hyperledger.besu.ethereum.core.Block;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.core.BlockWithReceipts;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Difficulty;
 import org.hyperledger.besu.ethereum.core.MiningParameters;
 import org.hyperledger.besu.ethereum.core.MutableWorldState;
@@ -217,7 +218,7 @@ public class MergeCoordinator implements MergeMiningCoordinator, BadChainListene
   public Optional<Block> createBlock(
       final BlockHeader parentHeader,
       final List<Transaction> transactions,
-      final List<BlockHeader> ommers) {
+      final List<BlockHeader> ommers, List<Deposit> deposits) {
     throw new UnsupportedOperationException("random is required");
   }
 

@@ -31,11 +31,11 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.VariableTree;
 
-@AutoService(BugChecker.class)
-@BugPattern(
-    summary = "Method input parameters must be final.",
-    severity = WARNING,
-    linkType = BugPattern.LinkType.NONE)
+//@AutoService(BugChecker.class)
+//@BugPattern(
+//    summary = "Method input parameters must be final.",
+//    severity = WARNING,
+//    linkType = BugPattern.LinkType.NONE)
 public class MethodInputParametersMustBeFinal extends BugChecker
     implements MethodTreeMatcher, ClassTreeMatcher {
 

@@ -22,6 +22,7 @@ import org.hyperledger.besu.ethereum.chain.BlockAddedObserver;
 import org.hyperledger.besu.ethereum.chain.Blockchain;
 import org.hyperledger.besu.ethereum.core.Block;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Transaction;
 
 import java.util.List;
@@ -116,8 +117,8 @@ public class MigratingMiningCoordinator implements MiningCoordinator, BlockAdded
   public Optional<Block> createBlock(
       final BlockHeader parentHeader,
       final List<Transaction> transactions,
-      final List<BlockHeader> ommers) {
-    return activeMiningCoordinator.createBlock(parentHeader, transactions, ommers);
+      final List<BlockHeader> ommers, List<Deposit> deposits) {
+    return activeMiningCoordinator.createBlock(parentHeader, transactions, ommers, deposits);
   }
 
   @Override

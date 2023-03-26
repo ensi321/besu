@@ -43,7 +43,7 @@ public class SealableBlockHeader extends ProcessableBlockHeader {
 
   protected final Hash withdrawalsRoot;
 
-  protected final Hash depositsRoot;
+  protected Hash depositsRoot;
 
   protected SealableBlockHeader(
       final Hash parentHash,
@@ -164,5 +164,9 @@ public class SealableBlockHeader extends ProcessableBlockHeader {
    */
   public Optional<Hash> getDepositsRoot() {
     return Optional.ofNullable(depositsRoot);
+  }
+
+  public void setDepositsRoot(Hash depositsRoot) {
+    this.depositsRoot = depositsRoot;
   }
 }

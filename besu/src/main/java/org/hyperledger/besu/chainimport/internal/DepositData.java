@@ -22,12 +22,17 @@ import com.google.common.base.Suppliers;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.units.bigints.UInt256;
+import org.apache.tuweni.units.bigints.UInt64;
 import org.hyperledger.besu.crypto.KeyPair;
 import org.hyperledger.besu.crypto.SECPPrivateKey;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Address;
+import org.hyperledger.besu.datatypes.BLSPublicKey;
+import org.hyperledger.besu.datatypes.BLSSignature;
+import org.hyperledger.besu.datatypes.GWei;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Transaction;
 
 import java.util.Optional;
@@ -35,74 +40,31 @@ import java.util.Optional;
 /** The Transaction data. */
 @JsonIgnoreProperties("comment")
 public class DepositData {
+  private final BLSPublicKey pubKey;
+  private final Bytes32 depositWithdrawalCredentials;
+  private final GWei amount;
+  private final BLSSignature signature;
+  private final UInt64 index;
 
-  private final long gasLimit;
-  private final Wei gasPrice;
-  private final Bytes data;
-  private final Wei value;
-  private final Optional<Address> to;
-  private final SECPPrivateKey privateKey;
-
-  private static final Supplier<SignatureAlgorithm> SIGNATURE_ALGORITHM =
-      Suppliers.memoize(SignatureAlgorithmFactory::getInstance);
-
-  /**
-   * Instantiates a new Transaction data.
-   *
-   * @param gasLimit the gas limit
-   * @param gasPrice the gas price
-   * @param data the data
-   * @param value the value
-   * @param to the to
-   * @param secretKey the secret key
-   */
   @JsonCreator
   public DepositData(
-      @JsonProperty("gasLimit") final String gasLimit,
-      @JsonProperty("gasPrice") final String gasPrice,
-      @JsonProperty("data") final Optional<String> data,
-      @JsonProperty("value") final Optional<String> value,
-      @JsonProperty("to") final Optional<String> to,
-      @JsonProperty("secretKey") final String secretKey) {
-    this.gasLimit = UInt256.fromHexString(gasLimit).toLong();
-    this.gasPrice = Wei.fromHexString(gasPrice);
-    this.data = data.map(Bytes::fromHexString).orElse(Bytes.EMPTY);
-    this.value = value.map(Wei::fromHexString).orElse(Wei.ZERO);
-    this.to = to.map(Address::fromHexString);
-    this.privateKey = SIGNATURE_ALGORITHM.get().createPrivateKey(Bytes32.fromHexString(secretKey));
+      @JsonProperty("pubKey") final String pubKey,
+      @JsonProperty("withdrawalCredential") final String withdrawalCredential,
+      @JsonProperty("amount") final String amount,
+      @JsonProperty("signature") final String signature,
+      @JsonProperty("index") final String index) {
+
+    this.pubKey = BLSPublicKey.fromHexString(pubKey);
+    this.depositWithdrawalCredentials = Bytes32.fromHexString(withdrawalCredential);
+    this.amount = GWei.fromHexString(amount);
+    this.signature = BLSSignature.fromHexString(signature);
+    this.index = UInt64.fromHexString(index);
+
   }
 
-  /**
-   * Gets signed transaction.
-   *
-   * @param nonceProvider the nonce provider
-   * @return the signed transaction
-   */
-  public Transaction getSignedTransaction(final NonceProvider nonceProvider) {
-    final KeyPair keyPair = SIGNATURE_ALGORITHM.get().createKeyPair(privateKey);
 
-    final Address fromAddress = Address.extract(keyPair.getPublicKey());
-    final long nonce = nonceProvider.get(fromAddress);
-    return Transaction.builder()
-        .gasLimit(gasLimit)
-        .gasPrice(gasPrice)
-        .nonce(nonce)
-        .payload(data)
-        .value(value)
-        .to(to.orElse(null))
-        .guessType()
-        .signAndBuild(keyPair);
+  public Deposit toDeposit() {
+    return new Deposit(pubKey, depositWithdrawalCredentials, amount, signature, index);
   }
 
-  /** The interface Nonce provider. */
-  @FunctionalInterface
-  public interface NonceProvider {
-    /**
-     * Get Nonce.
-     *
-     * @param address the address
-     * @return the Nonce
-     */
-    long get(final Address address);
-  }
 }

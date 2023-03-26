@@ -129,28 +129,29 @@ public abstract class AbstractBlockCreator implements AsyncBlockCreator {
    */
   @Override
   public BlockCreationResult createBlock(final long timestamp) {
-    return createBlock(Optional.empty(), Optional.empty(), timestamp);
+    return createBlock(Optional.empty(), Optional.empty(), timestamp, Optional.empty());
   }
 
   @Override
   public BlockCreationResult createBlock(
-      final List<Transaction> transactions, final List<BlockHeader> ommers, final long timestamp) {
-    return createBlock(Optional.of(transactions), Optional.of(ommers), timestamp);
+      final List<Transaction> transactions, final List<BlockHeader> ommers, final long timestamp, List<Deposit> deposits) {
+    return createBlock(Optional.of(transactions), Optional.of(ommers), timestamp, Optional.of(deposits));
   }
 
   @Override
   public BlockCreationResult createBlock(
       final Optional<List<Transaction>> maybeTransactions,
       final Optional<List<BlockHeader>> maybeOmmers,
-      final long timestamp) {
+      final long timestamp, Optional<List<Deposit>> deposits) {
     return createBlock(
-        maybeTransactions, maybeOmmers, Optional.empty(), Optional.empty(), timestamp, true);
+        maybeTransactions, maybeOmmers, Optional.empty(), deposits, Optional.empty(), timestamp, true);
   }
 
   protected BlockCreationResult createBlock(
       final Optional<List<Transaction>> maybeTransactions,
       final Optional<List<BlockHeader>> maybeOmmers,
       final Optional<List<Withdrawal>> maybeWithdrawals,
+      final Optional<List<Deposit>> maybeDeposits,
       final Optional<Bytes32> maybePrevRandao,
       final long timestamp,
       boolean rewardCoinbase) {
@@ -202,9 +203,6 @@ public abstract class AbstractBlockCreator implements AsyncBlockCreator {
 
       throwIfStopped();
 
-      final Optional<List<Deposit>> maybeDeposits =
-          Optional.empty(); // TODO 6110: Extract deposits from transaction receipts
-
       if (rewardCoinbase
           && !rewardBeneficiary(
               disposableWorldState,
@@ -239,7 +237,7 @@ public abstract class AbstractBlockCreator implements AsyncBlockCreator {
                   withdrawalsCanBeProcessed
                       ? BodyValidation.withdrawalsRoot(maybeWithdrawals.get())
                       : null)
-              .depositsRoot(null) // TODO 6110: Derive deposit roots from deposits
+              .depositsRoot(BodyValidation.depositsRoot(maybeDeposits.get())) // TODO 6110: Derive deposit roots from deposits
               .excessDataGas(newExcessDataGas)
               .buildSealableBlockHeader();
 

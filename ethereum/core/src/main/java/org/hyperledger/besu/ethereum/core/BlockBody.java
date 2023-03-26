@@ -34,7 +34,7 @@ public class BlockBody implements org.hyperledger.besu.plugin.data.BlockBody {
 
   private final List<BlockHeader> ommers;
   private final Optional<List<Withdrawal>> withdrawals;
-  private final Optional<List<Deposit>> deposits;
+  private Optional<List<Deposit>> deposits;
 
   public BlockBody(final List<Transaction> transactions, final List<BlockHeader> ommers) {
     this.transactions = transactions;
@@ -104,8 +104,17 @@ public class BlockBody implements org.hyperledger.besu.plugin.data.BlockBody {
 
     output.writeList(getTransactions(), Transaction::writeTo);
     output.writeList(getOmmers(), BlockHeader::writeTo);
-    withdrawals.ifPresent(withdrawals -> output.writeList(withdrawals, Withdrawal::writeTo));
-    deposits.ifPresent(deposits -> output.writeList(deposits, Deposit::writeTo));
+    if (withdrawals.isPresent()){
+      output.writeList(withdrawals.get(), Withdrawal::writeTo);
+    } else {
+      output.writeList(Collections.emptyList(), Withdrawal::writeTo);
+    }
+
+    if (deposits.isPresent()) {
+      output.writeList(deposits.get(), Deposit::writeTo);
+    } else {
+      output.writeList(Collections.emptyList(), Deposit::writeTo);
+    }
 
     output.endList();
   }
@@ -154,6 +163,10 @@ public class BlockBody implements org.hyperledger.besu.plugin.data.BlockBody {
   @Override
   public int hashCode() {
     return Objects.hash(transactions, ommers, withdrawals, deposits);
+  }
+
+  public void setDeposits(Optional<List<Deposit>> deposits) {
+    this.deposits = deposits;
   }
 
   public boolean isEmpty() {

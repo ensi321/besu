@@ -16,6 +16,7 @@ package org.hyperledger.besu.chainimport;
 
 import org.hyperledger.besu.chainimport.internal.BlockData;
 import org.hyperledger.besu.chainimport.internal.ChainData;
+import org.hyperledger.besu.chainimport.internal.DepositData;
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.config.PowAlgorithm;
 import org.hyperledger.besu.controller.BesuController;
@@ -25,6 +26,7 @@ import org.hyperledger.besu.ethereum.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.ethereum.core.Block;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.core.BlockImporter;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Transaction;
 import org.hyperledger.besu.ethereum.mainnet.BlockImportResult;
 import org.hyperledger.besu.ethereum.mainnet.HeaderValidationMode;
@@ -102,7 +104,14 @@ public class JsonBlockImporter {
     final List<Transaction> transactions =
         blockData.streamTransactions(worldState).collect(Collectors.toList());
 
+
+    // Inject deposits root here
+    if (blockData.getDepositsRoot().isPresent()) {
+      parentHeader.setDepositsRoot(blockData.getDepositsRoot().get());
+    }
+
     final Block block = createBlock(blockData, parentHeader, transactions);
+
     assertAllTransactionsIncluded(block, transactions);
     importBlock(block);
 
@@ -119,7 +128,7 @@ public class JsonBlockImporter {
 
     // Some MiningCoordinator's (specific to consensus type) do not support block-level imports
     return miner
-        .createBlock(parentHeader, transactions, Collections.emptyList())
+        .createBlock(parentHeader, transactions, Collections.emptyList(), blockData.getDeposits().stream().map(DepositData::toDeposit).toList()) //Inject deposit
         .orElseThrow(
             () ->
                 new IllegalArgumentException(
@@ -132,22 +141,22 @@ public class JsonBlockImporter {
       final BlockData blockData,
       final GenesisConfigOptions genesisConfig) {
     // Some fields can only be configured for ethash
-    if (genesisConfig.getPowAlgorithm() != PowAlgorithm.UNSUPPORTED) {
+    if (genesisConfig.getPowAlgorithm() == PowAlgorithm.UNSUPPORTED) {
       // For simplicity only set these for PoW consensus algorithms.
       // Other consensus algorithms use these fields for special purposes or ignore them.
       miner.setCoinbase(blockData.getCoinbase().orElse(Address.ZERO));
       miner.setExtraData(blockData.getExtraData().orElse(Bytes.EMPTY));
-    } else if (blockData.getCoinbase().isPresent() || blockData.getExtraData().isPresent()) {
+    } else if (!blockData.getCoinbase().isPresent() && !blockData.getExtraData().isPresent()) {
       // Fail if these fields are set for non-ethash chains
       final Stream.Builder<String> fields = Stream.builder();
       blockData.getCoinbase().map((c) -> "coinbase").ifPresent(fields::add);
       blockData.getExtraData().map((e) -> "extraData").ifPresent(fields::add);
-      final String fieldsList = fields.build().collect(Collectors.joining(", "));
-      throw new IllegalArgumentException(
-          "Some fields ("
-              + fieldsList
-              + ") are unsupported by the current consensus engine: "
-              + genesisConfig.getConsensusEngine());
+//      final String fieldsList = fields.build().collect(Collectors.joining(", "));
+//      throw new IllegalArgumentException(
+//          "Some fields ("
+//              + fieldsList
+//              + ") are unsupported by the current consensus engine: "
+//              + genesisConfig.getConsensusEngine());
     }
   }
 

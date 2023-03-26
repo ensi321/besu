@@ -234,7 +234,7 @@ public abstract class AbstractIsolationTests {
   protected Block forTransactions(
       final List<Transaction> transactions, final BlockHeader forHeader) {
     return TestBlockCreator.forHeader(forHeader, protocolContext, protocolSchedule, sorter)
-        .createBlock(transactions, Collections.emptyList(), System.currentTimeMillis())
+        .createBlock(transactions, Collections.emptyList(), System.currentTimeMillis(), Collections.emptyList())
         .getBlock();
   }
 

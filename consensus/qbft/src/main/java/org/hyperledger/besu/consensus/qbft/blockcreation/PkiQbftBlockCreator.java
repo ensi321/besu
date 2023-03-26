@@ -28,6 +28,7 @@ import org.hyperledger.besu.ethereum.blockcreation.BlockCreator;
 import org.hyperledger.besu.ethereum.core.Block;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
 import org.hyperledger.besu.ethereum.core.BlockHeaderBuilder;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Transaction;
 import org.hyperledger.besu.pki.cms.CmsCreator;
 
@@ -97,9 +98,9 @@ public class PkiQbftBlockCreator implements BlockCreator {
 
   @Override
   public BlockCreationResult createBlock(
-      final List<Transaction> transactions, final List<BlockHeader> ommers, final long timestamp) {
+      final List<Transaction> transactions, final List<BlockHeader> ommers, final long timestamp, List<Deposit> deposits) {
     final BlockCreationResult blockCreationResult =
-        blockCreator.createBlock(transactions, ommers, timestamp);
+        blockCreator.createBlock(transactions, ommers, timestamp, deposits);
     return replaceCmsInBlock(blockCreationResult);
   }
 
@@ -107,11 +108,11 @@ public class PkiQbftBlockCreator implements BlockCreator {
   public BlockCreationResult createBlock(
       final Optional<List<Transaction>> maybeTransactions,
       final Optional<List<BlockHeader>> maybeOmmers,
-      final long timestamp) {
+      final long timestamp, Optional<List<Deposit>> deposits) {
     return createBlock(
         maybeTransactions.orElse(Collections.emptyList()),
         maybeOmmers.orElse(Collections.emptyList()),
-        timestamp);
+        timestamp, deposits.orElse(Collections.emptyList()));
   }
 
   private BlockCreationResult replaceCmsInBlock(final BlockCreationResult blockCreationResult) {

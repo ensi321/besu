@@ -17,6 +17,7 @@ package org.hyperledger.besu.ethereum.blockcreation;
 import org.hyperledger.besu.ethereum.blockcreation.BlockTransactionSelector.TransactionSelectionResults;
 import org.hyperledger.besu.ethereum.core.Block;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Transaction;
 
 import java.util.List;
@@ -45,10 +46,10 @@ public interface BlockCreator {
   BlockCreationResult createBlock(final long timestamp);
 
   BlockCreationResult createBlock(
-      final List<Transaction> transactions, final List<BlockHeader> ommers, final long timestamp);
+      final List<Transaction> transactions, final List<BlockHeader> ommers, final long timestamp, List<Deposit> deposits);
 
   BlockCreationResult createBlock(
       final Optional<List<Transaction>> maybeTransactions,
       final Optional<List<BlockHeader>> maybeOmmers,
-      final long timestamp);
+      final long timestamp, Optional<List<Deposit>> deposits);
 }

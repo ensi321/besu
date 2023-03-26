@@ -237,12 +237,18 @@ public class BlockHeader extends SealableBlockHeader
     out.writeLong(nonce);
     if (baseFee != null) {
       out.writeUInt256Scalar(baseFee);
+    } else {
+      out.writeUInt256Scalar(Wei.ZERO);
     }
     if (withdrawalsRoot != null) {
       out.writeBytes(withdrawalsRoot);
+    } else {
+      out.writeBytes(Hash.ZERO);
     }
     if (excessDataGas != null) {
       out.writeUInt256Scalar(excessDataGas);
+    } else {
+      out.writeUInt256Scalar(DataGas.ZERO);
     }
     if (depositsRoot != null) {
       out.writeBytes(depositsRoot);

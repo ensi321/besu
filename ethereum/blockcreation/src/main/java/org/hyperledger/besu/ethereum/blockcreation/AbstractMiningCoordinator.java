@@ -23,6 +23,7 @@ import org.hyperledger.besu.ethereum.chain.MinedBlockObserver;
 import org.hyperledger.besu.ethereum.chain.PoWObserver;
 import org.hyperledger.besu.ethereum.core.Block;
 import org.hyperledger.besu.ethereum.core.BlockHeader;
+import org.hyperledger.besu.ethereum.core.Deposit;
 import org.hyperledger.besu.ethereum.core.Transaction;
 import org.hyperledger.besu.ethereum.eth.sync.state.SyncState;
 import org.hyperledger.besu.util.Subscribers;
@@ -70,9 +71,9 @@ public abstract class AbstractMiningCoordinator<
   public Optional<Block> createBlock(
       final BlockHeader parentHeader,
       final List<Transaction> transactions,
-      final List<BlockHeader> ommers) {
+      final List<BlockHeader> ommers, List<Deposit> deposits) {
     final M miner = executor.createMiner(minedBlockObservers, ethHashObservers, parentHeader);
-    return Optional.of(miner.createBlock(parentHeader, transactions, ommers).getBlock());
+    return Optional.of(miner.createBlock(parentHeader, transactions, deposits, ommers).getBlock());
   }
 
   @Override
