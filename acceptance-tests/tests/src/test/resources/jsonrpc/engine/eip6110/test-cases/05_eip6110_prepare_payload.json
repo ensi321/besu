@@ -11,12 +11,12 @@
       {
         "timestamp": "0x20",
         "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
-        "suggestedFeeRecipient": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+        "suggestedFeeRecipient": "0xa4664C40AACeBD82A2Db79f0ea36C06Bc6A19Adb",
         "withdrawals": [
           {
             "index": "0x0",
             "validatorIndex": "0x0",
-            "address": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+            "address": "0xa4664C40AACeBD82A2Db79f0ea36C06Bc6A19Adb",
             "amount": "0x1"
           },
           {
